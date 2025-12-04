@@ -51,6 +51,7 @@ public class CustomShedlock {
         LockConfigurationExtractor lockConfigurationExtractor
                 = new CustomLockConfigurationExtractor(
                 lockAtMostFor, lockAtLeastFor, appName);
+        // 每一个appName 只会被注册一次，多次调用只有第一次有效。
         return new DefaultLockManager(lockProvider, lockConfigurationExtractor);
     }
 

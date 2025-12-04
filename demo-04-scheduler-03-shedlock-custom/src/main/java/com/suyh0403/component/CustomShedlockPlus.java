@@ -43,7 +43,9 @@ public class CustomShedlockPlus {
      * @param appName app name
      */
     public boolean executeRegistryWithLock(@NonNull String appName) {
+        // 通过appName 获取一把分布式锁，不存在时注册这把锁。
         LockConfiguration lockConfig = appNameLock.computeIfAbsent(appName, this::buildLockConfiguration);
+        // 尝试获取锁（非阻塞）。
         Optional<SimpleLock> lock = lockProvider.lock(lockConfig);
         if (!lock.isPresent()) {
             log.debug("Not executing {}. It's locked.", lockConfig.getName());
@@ -59,6 +61,9 @@ public class CustomShedlockPlus {
         }
     }
 
+    /**
+     * 按理说每一个app 的配置都不一样。这里只是偷懒了，将所有的配置都处理成一样的。
+     */
     private LockConfiguration buildLockConfiguration(String lockName) {
         // 持有锁最大时间，如果持有锁的那个实例，一直没释放锁，那么达到该时间之后该锁也会失效。
         Duration lockAtMost = Duration.ofSeconds(5);
